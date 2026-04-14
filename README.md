@@ -2,6 +2,60 @@
 
 An AI agent skill that stages changes and builds commit messages following your branch's established conventions — with full user review before anything is committed.
 
+## 📦 Installation
+
+Clone this repository (or download the files) and copy the skill into your tool's user-level skills directory.
+
+```bash
+git clone https://github.com/nauman73/smart-commit.git
+```
+
+### Claude Code
+
+```bash
+# Linux / macOS
+cp -r smart-commit ~/.claude/skills/smart-commit
+
+# Windows
+xcopy smart-commit "%USERPROFILE%\.claude\skills\smart-commit" /E /I
+```
+
+Start a new session — the skill is discovered automatically. Invoke it with `/smart-commit` or by asking the agent to commit your changes.
+
+For more details, see the [Claude Code skills documentation](https://platform.claude.com/docs/en/agents-and-tools/agent-skills/overview).
+
+### GitHub Copilot
+
+```bash
+# Linux / macOS
+cp -r smart-commit ~/.copilot/skills/smart-commit
+
+# Windows
+xcopy smart-commit "%USERPROFILE%\.copilot\skills\smart-commit" /E /I
+```
+
+Start a new session — Copilot discovers skills automatically and activates them based on your prompt and the skill's description. You can also invoke it with `/smart-commit` in the chat panel.
+
+For more details, see the [GitHub Copilot skills documentation](https://docs.github.com/en/copilot/how-tos/use-copilot-agents/cloud-agent/create-skills).
+
+### Cursor
+
+```bash
+# Linux / macOS
+cp -r smart-commit ~/.cursor/skills/smart-commit
+
+# Windows
+xcopy smart-commit "%USERPROFILE%\.cursor\skills\smart-commit" /E /I
+```
+
+Start a new session — Cursor discovers skills automatically and makes them available to the agent. You can also invoke it with `/smart-commit` in the agent chat.
+
+For more details, see the [Cursor skills documentation](https://cursor.com/docs/skills).
+
+### Other tools
+
+If you're using a different AI coding agent, check its documentation for adding custom skills. The core of this skill is the `SKILL.md` file with supporting files in `references/` — most tools that support skills use a similar directory structure.
+
 ## 🚀 Quick Start
 
 Invoke the skill in your AI coding tool:
