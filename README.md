@@ -1,5 +1,7 @@
 # 📝 Smart Commit
 
+![Smart Commit](title.png)
+
 An AI agent skill that stages changes and builds commit messages following your branch's established conventions — with full user review before anything is committed.
 
 ## 📦 Installation
