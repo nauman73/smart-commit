@@ -93,34 +93,42 @@ The commit message has two parts:
 
 **First line:**
 
-The first line can come from three sources: the most recent commit, a saved convention, or a new convention the user defines on the spot. Saved conventions live in `SKILL_DIR/references/conventions/` as one Markdown file per convention (YAML frontmatter with `name` + `description`, then `## Format`, `## Example`, `## Fields` sections). They persist across sessions so the user doesn't re-describe their format every run.
+The first line can come from four sources: the most recent commit, a saved convention, the last convention used in this session, or a new convention the user defines on the spot. Saved conventions live in `SKILL_DIR/references/conventions/` as one Markdown file per convention (YAML frontmatter with `name` + `description`, then `## Format`, `## Example`, `## Fields` sections). They persist across sessions so the user doesn't re-describe their format every run.
 
 1. **Gather the options:**
    - Read the most recent commit first line via `git log --oneline -1` (strip the leading short hash).
    - List files in `SKILL_DIR/references/conventions/*.md`. For each, read the frontmatter to get `name` and `description`.
+   - Check the conversation history for a previous smart-commit invocation that used a convention. If found, note which convention and field values were used.
 
 2. **Ask the user which source to use.** Adapt the question to what's available:
-   - **If saved conventions exist**, present three choices:
+   - **If saved conventions exist**, present up to four choices:
      - (a) Use the most recent commit's first line (show it).
      - (b) Use a saved convention — list each as `<name> — <description>`, numbered for easy selection.
      - (c) Define a new convention.
-   - **If no saved conventions exist yet**, present two choices: (a) use most recent, or (b) define a new convention.
+     - (d) Last used convention — only show this option if a convention was used in a previous smart-commit invocation this session. Show the convention name and field values, e.g. `Last used: conventional-commits (type = feat, scope = skill)`.
+   - **If no saved conventions exist yet**, present two choices: (a) use most recent, or (b) define a new convention. Include (d) if a convention was used earlier in the session.
    - **If there is no prior commit on the branch** (fresh repo), skip option (a).
 
 3. **If the user picks "use most recent"** → use that line verbatim as the first line.
 
 4. **If the user picks a saved convention:**
    - Read the full convention file.
-   - For each field listed under `## Fields`, ask the user for a value. Respect any per-field rules noted in the convention (e.g., auto-prefix behaviour).
+   - For each field listed under `## Fields`, suggest a value based on the changes since the last commit (e.g., infer `type` from the nature of the diff, `scope` from the area of code affected). Present the suggestion and let the user accept or provide a different value. Respect any per-field rules noted in the convention (e.g., auto-prefix behaviour).
    - Assemble the first line by substituting the values into the pattern shown in `## Format`.
 
-5. **If the user picks "define a new convention":**
+5. **If the user picks "last used convention":**
+   - Retrieve the convention name and field values from the previous smart-commit invocation in this session.
+   - Read the full convention file.
+   - For each field, suggest a value based on the current changes (same as step 4). Pre-fill with the last-used value as a secondary reference if the diff-based suggestion is unclear.
+   - Assemble the first line by substituting the values into the pattern shown in `## Format`.
+
+6. **If the user picks "define a new convention":**
    a. Ask for a **name** (required). Slugify it for the filename (lowercase, spaces/punctuation → hyphens). If `SKILL_DIR/references/conventions/<slug>.md` already exists, tell the user and ask for a different name.
    b. Ask for a **one-line description** — this is what future runs show in the menu, so it should be distinctive.
    c. Ask for an **example first line** (or a template with angle-bracket placeholders like `<version>`). From this, infer the `## Format` pattern and the list of `## Fields`.
    d. Echo back the inferred `## Format`, `## Example`, and `## Fields` and ask the user to confirm or correct. This prevents saving a misunderstood format.
    e. Once confirmed, write `SKILL_DIR/references/conventions/<slug>.md` using the frontmatter + sections layout described above.
-   f. Then fall through to step 4's field interview to build the first line for this commit.
+   f. Then fall through to step 4's field interview (with diff-based suggestions) to build the first line for this commit.
 
 **Body (after a blank line):** Write a concise summary of what changed, focusing on the "why" rather than listing every file. Keep it to 2-5 sentences. Mention key behavioral changes, new features, or bug fixes.
 
