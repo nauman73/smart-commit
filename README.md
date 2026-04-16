@@ -68,21 +68,61 @@ Invoke the skill in your AI coding tool:
 
 Or simply ask the agent to commit your changes — the skill triggers automatically when you mention committing.
 
+### Flags
+
+| Flag | Description |
+|------|-------------|
+| `--fresh` | Skip preference recall and run through all steps from scratch |
+
+Example: `/smart-commit --fresh`
+
 ## 🔄 Workflow
 
-The skill walks through five sequential steps, pausing for your input at each stage:
+The skill walks through six sequential steps, pausing for your input at each stage:
 
 | Step | What happens |
 |------|-------------|
+| **0. Recall preferences** | On repeat invocations, presents previous preferences (staging approach, convention + field values, action) for quick confirmation. Skipped on first run or with `--fresh`. |
 | **1. Gather context** | Reads `git status`, `git diff`, and recent commit history |
 | **2. Stage files** | Stages modified tracked files, asks about untracked files, then confirms the final file list with you |
-| **3. Build message** | Asks you to pick a commit message format, then assembles the first line and body |
+| **3. Build message** | Asks you to pick a commit message format, suggests field values based on the diff, then assembles the first line and body |
 | **4. Review** | Presents the full commit message for your approval or editing |
 | **5. Commit** | Lets you choose **Commit** or **Commit and push**, then executes |
+
+### Fast Mode (Preference Recall)
+
+When you invoke `/smart-commit` a second time in the same session, the skill presents your previous preferences:
+
+```
+Previous smart-commit preferences found:
+- Staging: tracked files only (untracked files were excluded)
+  - Files to commit: src/auth.ts, src/login.ts
+- Convention: conventional-commits (type = feat, scope = auth)
+- Action: commit and push
+
+Use same preferences? (Y/N)
+```
+
+Answering **Y** skips all prompts except the message review (Step 4) — the body is always freshly generated from the current diff. Use `--fresh` to bypass this and start from scratch.
 
 ## 📋 Commit Message Conventions
 
 The skill supports reusable commit message conventions stored in `references/conventions/`. Each convention defines a first-line format with named fields that the skill prompts you to fill in.
+
+When asked for field values, the skill **suggests values based on the current diff** (e.g., inferring `type` from the nature of the changes, `scope` from the area of code affected). You can accept the suggestions or provide your own.
+
+### Choosing a Convention
+
+When building the commit message, you can choose from up to four sources:
+
+| Option | Description |
+|--------|-------------|
+| **(a)** Most recent commit | Reuse the previous commit's first line verbatim |
+| **(b)** Saved convention | Pick from your saved conventions and fill in field values |
+| **(c)** New convention | Define a new format on the spot — it's saved for future use |
+| **(d)** Last used convention | Reuse the convention and field values from the previous `/smart-commit` in this session |
+
+Option **(d)** only appears after you've already used a convention in the current session.
 
 ### Built-in Conventions
 
@@ -127,5 +167,8 @@ smart-commit/
 ## 💡 Tips
 
 - Type **`a`** when asked about the commit format to reuse the most recent commit's first line — great for follow-up commits in the same area.
+- Type **`d`** to reuse the last convention and field values from this session — ideal for multiple commits with the same type/scope.
+- On repeat commits, just hit **Y** at the preference recall prompt to skip straight to the message review.
+- Use `--fresh` when you want to start clean despite having previous preferences.
 - Conventions persist across sessions, so you only define a format once.
 - If you have no files to commit, the skill will show you what's available and let you choose before stopping.

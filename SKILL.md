@@ -57,12 +57,18 @@ Proceed to Step 1 and run through all steps normally, prompting at each.
 
 ### Step 1: Gather context
 
-Run these sequentially in a single command (parallel bash calls can fail on some environments):
+Run each of these as a **separate Bash call** (not chained with `&&`). On Windows Git Bash, chaining multiple git commands in a single shell invocation can trigger intermittent `add_item` fatal errors.
 
 ```bash
 git status
+```
+```bash
 git diff
+```
+```bash
 git diff --cached
+```
+```bash
 git log --oneline -5
 ```
 
