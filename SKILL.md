@@ -11,9 +11,49 @@ Commit all changes since the last commit, following the branch's established fir
 
 When this skill is triggered, the system message includes a line like `Base directory for this skill: /path/to/smart-commit`. That path is referred to as `SKILL_DIR` throughout these instructions. All references to `references/conventions/` below mean `SKILL_DIR/references/conventions/` — **not** the user's current working directory. Always resolve paths relative to the skill's base directory.
 
+## Flags
+
+- `--fresh` — Skip preference recall (Step 0) and run through all steps from scratch, prompting at each.
+
 ## Workflow
 
 **Execute steps strictly in order.** Complete each step fully — including any user confirmations — before moving to the next. Never combine questions or decisions from multiple steps into a single prompt. For example, do not ask about the commit message format (Step 3) while still confirming the file list (Step 2).
+
+### Step 0: Recall previous preferences
+
+This step provides a shortcut for repeat commits within the same session. If the `--fresh` flag was passed, skip this step entirely and go to Step 1.
+
+Look back through the conversation history for a previous invocation of this skill in the current session. If none is found, skip to Step 1.
+
+If a previous invocation exists, extract the preferences that were used:
+
+- **Staging approach** — whether untracked files were included or excluded.
+- **Convention + field values** — which convention was used and the values supplied for each field (e.g., `type` = feat, `scope` = auth).
+- **Action** — commit only or commit and push.
+
+Run `git status` and `git diff` to determine what files currently have changes. Then present the recalled preferences along with the current file list (derived by applying the recalled staging approach to the current status):
+
+> **Previous smart-commit preferences found:**
+> - Staging: tracked files only (untracked files were excluded)
+>   - Files to commit: `src/auth.ts`, `src/login.ts`, `tests/auth.test.ts`
+> - Convention: `conventional-commits` (`type` = feat, `scope` = auth)
+> - Action: commit and push
+>
+> Use same preferences? (Y/N)
+
+**If the user says Yes:**
+
+Execute Steps 1–5 in fast mode — skip all user prompts except for the message review in Step 4 (since the body is freshly generated from the new diff). Specifically:
+
+- **Step 1** — Gather context as normal.
+- **Step 2** — Auto-stage files per the recalled staging approach. Show the file list for awareness but do not prompt for confirmation.
+- **Step 3** — Build the first line using the recalled convention and field values (no field interview). Generate the body fresh from the current diff.
+- **Step 4** — Present the full commit message for review. The user must still confirm here because the body is new.
+- **Step 5** — Execute the recalled action (commit or commit-and-push) without asking again.
+
+**If the user says No:**
+
+Proceed to Step 1 and run through all steps normally, prompting at each.
 
 ### Step 1: Gather context
 
