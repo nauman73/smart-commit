@@ -100,10 +100,14 @@ Previous smart-commit preferences found:
 - Convention: conventional-commits (type = feat, scope = auth)
 - Action: commit and push
 
+Warning: 2 file(s) with changes will NOT be included in this commit:
+- config/settings.json
+- docs/notes.md
+
 Use same preferences? (Y/N)
 ```
 
-Answering **Y** skips all prompts except the message review (Step 4) — the body is always freshly generated from the current diff. Use `--fresh` to bypass this and start from scratch.
+If any files with changes are excluded by the recalled staging preference, a warning lists them so you can decide whether to proceed or start fresh. Answering **Y** skips all prompts except the message review (Step 4) — the body is always freshly generated from the current diff. Use `--fresh` to bypass this and start from scratch.
 
 ## 📋 Commit Message Conventions
 

@@ -31,13 +31,31 @@ If a previous invocation exists, extract the preferences that were used:
 - **Convention + field values** — which convention was used and the values supplied for each field (e.g., `type` = feat, `scope` = auth).
 - **Action** — commit only or commit and push.
 
-Run `git status` and `git diff` to determine what files currently have changes. Then present the recalled preferences along with the current file list (derived by applying the recalled staging approach to the current status):
+Run `git status` and `git diff` as **separate Bash calls** (not chained with `&&`) to determine what files currently have changes. On Windows Git Bash, chaining or even single calls can trigger intermittent `add_item` fatal errors — if a call fails, retry it once. Then present the recalled preferences along with the current file list (derived by applying the recalled staging approach to the current status).
+
+If there are files with changes that will **not** be included in the commit (e.g., untracked files excluded by the staging preference, or unstaged files outside the recalled scope), add a prominent warning showing how many files are excluded and list each one. This ensures the user can make an informed decision before confirming.
+
+Example with excluded files:
 
 > **Previous smart-commit preferences found:**
 > - Staging: tracked files only (untracked files were excluded)
 >   - Files to commit: `src/auth.ts`, `src/login.ts`, `tests/auth.test.ts`
 > - Convention: `conventional-commits` (`type` = feat, `scope` = auth)
 > - Action: commit and push
+>
+> **Warning: 2 file(s) with changes will NOT be included in this commit:**
+> - `config/settings.json`
+> - `docs/notes.md`
+>
+> Use same preferences? (Y/N)
+
+Example with no excluded files:
+
+> **Previous smart-commit preferences found:**
+> - Staging: tracked and untracked files
+>   - Files to commit: `src/auth.ts`, `src/new-helper.ts`
+> - Convention: `conventional-commits` (`type` = feat, `scope` = auth)
+> - Action: commit only
 >
 > Use same preferences? (Y/N)
 
