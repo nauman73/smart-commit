@@ -70,11 +70,12 @@ Or simply ask the agent to commit your changes — the skill triggers automatica
 
 ### Flags
 
-| Flag | Description |
-|------|-------------|
-| `--fresh` | Skip preference recall and run through all steps from scratch |
+| Flag | Shorthand | Description |
+|------|-----------|-------------|
+| `--fresh` | `-f` | Skip preference recall and run through all steps from scratch |
+| `--reuse` | `-r` | Auto-accept preference recall and go straight into fast mode. Recalled choices are shown in the Step 4 message review so you still see what's being reused before confirming. |
 
-Example: `/smart-commit --fresh`
+Examples: `/smart-commit --fresh`, `/smart-commit -r`
 
 ## 🔄 Workflow
 
@@ -173,6 +174,7 @@ smart-commit/
 - Type **`a`** when asked about the commit format to reuse the most recent commit's first line — great for follow-up commits in the same area.
 - Type **`d`** to reuse the last convention and field values from this session — ideal for multiple commits with the same type/scope.
 - On repeat commits, just hit **Y** at the preference recall prompt to skip straight to the message review.
-- Use `--fresh` when you want to start clean despite having previous preferences.
+- Use `--reuse` (or `-r`) to skip the Y/N prompt entirely — recalled choices are still shown in the Step 4 review, so you stay informed.
+- Use `--fresh` (or `-f`) when you want to start clean despite having previous preferences.
 - Conventions persist across sessions, so you only define a format once.
 - If you have no files to commit, the skill will show you what's available and let you choose before stopping.

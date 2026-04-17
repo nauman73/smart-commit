@@ -13,7 +13,8 @@ When this skill is triggered, the system message includes a line like `Base dire
 
 ## Flags
 
-- `--fresh` — Skip preference recall (Step 0) and run through all steps from scratch, prompting at each.
+- `--fresh` (or `-f`) — Skip preference recall (Step 0) and run through all steps from scratch, prompting at each.
+- `--reuse` (or `-r`) — Auto-accept the preference recall prompt in Step 0. Instead of asking the user, the skill proceeds in fast mode. To keep the user aware of the reused choices, the recalled preferences (and any excluded-files warning) are folded into the Step 4 message review, so nothing is hidden from them.
 
 ## Workflow
 
@@ -21,7 +22,9 @@ When this skill is triggered, the system message includes a line like `Base dire
 
 ### Step 0: Recall previous preferences
 
-This step provides a shortcut for repeat commits within the same session. If the `--fresh` flag was passed, skip this step entirely and go to Step 1.
+This step provides a shortcut for repeat commits within the same session. If the `--fresh` (or `-f`) flag was passed, skip this step entirely and go to Step 1.
+
+If the `--reuse` (or `-r`) flag was passed, auto-accept the preference recall — skip the Y/N prompt and proceed directly into fast mode (as described under "If the user says Yes" below). Carry forward the recalled preferences and any excluded-files list; they will be shown to the user in Step 4 alongside the proposed commit message, so the user remains aware of the reused choices before confirming the commit.
 
 Look back through the conversation history for a previous invocation of this skill in the current session. If none is found, skip to Step 1.
 
@@ -160,7 +163,27 @@ The first line can come from four sources: the most recent commit, a saved conve
 
 Show the full commit message to the user and ask them to approve or request changes. Do NOT commit until the user confirms.
 
-Format it clearly so the user can read it:
+**If the `--reuse` flag was used in Step 0**, prepend the recalled preferences summary (and any excluded-files warning) above the proposed message, so the user can see the choices being reused before confirming. Example:
+
+```
+Reusing previous preferences:
+- Staging: tracked files only (untracked files were excluded)
+  - Files to commit: src/auth.ts, src/login.ts
+- Convention: conventional-commits (type = feat, scope = auth)
+- Action: commit and push
+
+Warning: 2 file(s) with changes will NOT be included in this commit:
+- config/settings.json
+- docs/notes.md
+
+Proposed commit message:
+
+feat(auth): add JWT login helper
+
+<body text here>
+```
+
+**Otherwise**, format it clearly so the user can read it:
 
 ```
 Proposed commit message:
