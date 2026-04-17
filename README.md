@@ -108,7 +108,25 @@ Warning: 2 file(s) with changes will NOT be included in this commit:
 Use same preferences? (Y/N)
 ```
 
-If any files with changes are excluded by the recalled staging preference, a warning lists them so you can decide whether to proceed or start fresh. Answering **Y** skips all prompts except the message review (Step 4) — the body is always freshly generated from the current diff. Use `--fresh` to bypass this and start from scratch.
+If any files with changes are excluded by the recalled staging preference, a warning lists them so you can decide whether to proceed or start fresh. Answering **Y** skips all prompts except the message review (Step 4) — the body is always freshly generated from the current diff.
+
+**Skip the Y/N prompt** with `--reuse` (or `-r`) — the skill goes straight into fast mode, and the recalled preferences (plus any excluded-files warning) are shown above the proposed commit message in Step 4 so you still see what's being reused before confirming. Example Step 4 output with `--reuse`:
+
+```
+Reusing previous preferences:
+- Staging: tracked files only (untracked files were excluded)
+  - Files to commit: src/auth.ts, src/login.ts
+- Convention: conventional-commits (type = feat, scope = auth)
+- Action: commit and push
+
+Proposed commit message:
+
+feat(auth): add JWT login helper
+
+<body text here>
+```
+
+Use `--fresh` (or `-f`) to bypass preference recall entirely and start from scratch.
 
 ## 📋 Commit Message Conventions
 
